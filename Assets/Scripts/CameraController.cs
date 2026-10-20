@@ -4,19 +4,41 @@ public class CameraController : MonoBehaviour
 {
     [Header("Objetivo")]
     public Transform target;
+    public float heightOffset = 1.5f;
 
-    [Header("Configuración de Cámara")]
-    public Vector3 offset = new Vector3(0f, 4f, -8f);
-    public float smoothSpeed = 10f;
+    [Header("config de orbita")]
+    public float distance = 6f; 
+    public float mouseSensitivityX = 3f;
+    public float mouseSensitivityY = 3f;
+
+    [Header("Limites verticales")]
+    public float minYAngle;
+    public float maxYAngle;
+
+    private float currentX;
+    private float currentY;
+
+    void Start()
+    {
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+    }
 
     void LateUpdate()
     {
         if (target == null) return;
 
-        Vector3 desiredPosition = target.position + offset;
+        currentX += Input.GetAxis("Mouse X") * mouseSensitivityX;
+        currentY -= Input.GetAxis("Mouse Y") * mouseSensitivityY;
 
-        transform.position = Vector3.Lerp(transform.position, desiredPosition, smoothSpeed * Time.deltaTime);
+        currentY = Mathf.Clamp(currentY, minYAngle, maxYAngle);
 
-        transform.LookAt(target);
+        Quaternion rotation = Quaternion.Euler(currentY, currentX, 0);
+
+        Vector3 targetCenter = target.position + Vector3.up * heightOffset;
+        Vector3 position = targetCenter - (rotation * Vector3.forward * distance);
+
+        transform.position = position;
+        transform.rotation = rotation;
     }
 }
