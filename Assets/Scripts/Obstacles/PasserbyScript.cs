@@ -52,10 +52,10 @@ public class PasserbyScript : MonoBehaviour
         {
             Desactivate();
         }
-        if (collision.gameObject.CompareTag("Finish"))
-            Spawn();
-        else
-            NoSpawn();
+       // if (collision.gameObject.CompareTag("Finish"))
+            //Spawn();
+        //else
+            //NoSpawn();
     }
 
     public void Desactivate ()
@@ -73,16 +73,16 @@ public class PasserbyScript : MonoBehaviour
         direction = -1;
     }
 
-    public void Spawn()
-    {
-        spawnCheck = true;
+   // public void Spawn()
+    //{
+      //  spawnCheck = true;
 
-    }
+    //}
 
-    public void NoSpawn()
-    {
-        spawnCheck = false;
-        _objectPool.Release(this);
-    }
+   // public void NoSpawn()
+    //{
+       // spawnCheck = false;
+       // _objectPool.Release(this);
+    //}
 
 }
