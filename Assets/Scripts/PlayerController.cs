@@ -1,5 +1,5 @@
 using UnityEngine;
-
+using UnityEngine.SceneManagement;
 public class PlayerController : MonoBehaviour
 {
     [Header("Movimiento y Rotacion")]
@@ -85,5 +85,22 @@ public class PlayerController : MonoBehaviour
         transform.rotation = Quaternion.Euler(0, transform.rotation.eulerAngles.y, 0);
 
         rb.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
+    }
+
+    public void Die()
+    {
+        if (isKnockedOut) return;
+        isKnockedOut = true;
+
+        rb.constraints = RigidbodyConstraints.None;
+
+        //rb.AddForce(Vector3.up * 5f, ForceMode.Impulse);
+
+        Invoke(nameof(RestartLevel), 2f);
+    }
+
+    void RestartLevel()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 }

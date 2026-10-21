@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d4b40659994b344691f003f560ac2cd, type: 3}
   m_Name: Persona
   m_EditorClassIdentifier: Assembly-CSharp::PasserbyData
-  bounceForce: 30
+  bounceForce: 10
   walkSpeed: 5
   modelPrefab: {fileID: 1703592676489758836, guid: 26497db090f9023409cb4b6363661f98, type: 3}
