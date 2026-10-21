@@ -3,6 +3,7 @@ using UnityEngine.SceneManagement;
 public class PlayerController : MonoBehaviour
 {
     [Header("Movimiento y Rotacion")]
+    public float originalSpeed = 8f;
     public float moveSpeed = 8f;
     public float jumpForce = 6f;
     public float turnSpeed = 10f;
@@ -23,6 +24,7 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody>();
+        originalSpeed = moveSpeed;
     }
 
     void Update()
@@ -87,6 +89,16 @@ public class PlayerController : MonoBehaviour
         rb.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
     }
 
+    public void ChangeSpeed(float newSpeed)
+    {
+        moveSpeed = newSpeed;
+    }
+
+    public void RestoreSpeed()
+    {
+        moveSpeed = originalSpeed;
+    }
+
     public void Die()
     {
         if (isKnockedOut) return;
@@ -104,3 +116,4 @@ public class PlayerController : MonoBehaviour
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 }
+
