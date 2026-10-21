@@ -48,11 +48,12 @@ public class PasserbyScript : MonoBehaviour
             player.HitAndFall(pushDirection, data.bounceForce);
         }
 
-        
-       // if (collision.gameObject.CompareTag("Finish"))
-            //Spawn();
-        //else
-            //NoSpawn();
+        if (collision.gameObject.layer == LayerMask.NameToLayer("Pared"))
+        {
+            Desactivate();
+        }
+
+       
     }
     private void OnTriggerEnter(Collider other)
     {
@@ -61,7 +62,13 @@ public class PasserbyScript : MonoBehaviour
         {
             Desactivate();
         }
+
+       if(other.gameObject.layer == LayerMask.NameToLayer("Pared"))
+        {
+            Desactivate();
+        }
     }
+
     public void Desactivate ()
     {
         _objectPool.Release(this);

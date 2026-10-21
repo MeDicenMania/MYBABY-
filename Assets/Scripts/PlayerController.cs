@@ -5,7 +5,7 @@ public class PlayerController : MonoBehaviour
     [Header("Movimiento y Rotacion")]
     public float originalSpeed = 8f;
     public float moveSpeed = 8f;
-    public float jumpForce = 6f;
+  
     public float turnSpeed = 10f;
 
     [Header("Deteccion suelo")]
@@ -16,6 +16,20 @@ public class PlayerController : MonoBehaviour
     [Header("Estado (Desmayado)")]
     public bool isKnockedOut = false;
     public float recoveryTime = 3f;
+
+
+    [Header("Salto")]
+    public float jumpForce;      
+    public float fallMultiplier = 2.5f;       
+    public float lowJumpMultiplier = 5f;     
+    public float maxFallSpeed = 25f;         
+    public float coyoteTime = 0.1f;         
+    public float jumpBufferTime = 0.1f;
+
+
+    private bool jumpHeld;
+    private float coyoteTimer;
+    private float bufferTimer;
 
     private Rigidbody rb;
     private Vector3 moveInput;
@@ -47,10 +61,18 @@ public class PlayerController : MonoBehaviour
 
         moveInput = (camForward * z + camRight * x).normalized;
 
-        if (Input.GetButtonDown("Jump") && isGrounded)
-        {
-            rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
-        }
+        jumpHeld = Input.GetButton("Jump");
+
+        if (Input.GetButtonDown("Jump"))
+            bufferTimer = jumpBufferTime;
+        else
+            bufferTimer -= Time.deltaTime;
+
+        if (isGrounded && rb.linearVelocity.y <= 0.01f)
+            coyoteTimer = coyoteTime;
+        else
+            coyoteTimer -= Time.deltaTime;
+       
     }
 
     void FixedUpdate()
@@ -65,8 +87,55 @@ public class PlayerController : MonoBehaviour
             Quaternion targetRotation = Quaternion.LookRotation(moveInput);
             rb.MoveRotation(Quaternion.Slerp(rb.rotation, targetRotation, turnSpeed * Time.fixedDeltaTime));
         }
+
+        HandleJump();
     }
 
+
+    void HandleJump()
+    {
+        Vector3 v = rb.linearVelocity;
+
+     
+        if (bufferTimer > 0f && coyoteTimer > 0f)
+        {
+            v.y = jumpForce;
+            bufferTimer = 0f;
+            coyoteTimer = 0f;
+        }
+
+        
+        if (v.y < 0f)
+        {
+        
+            v.y += Physics.gravity.y * (fallMultiplier - 1f) * Time.fixedDeltaTime;
+        }
+        else if (v.y > 0f && !jumpHeld)
+        {
+         
+            v.y += Physics.gravity.y * (lowJumpMultiplier - 1f) * Time.fixedDeltaTime;
+        }
+
+        
+        if (v.y < -maxFallSpeed) v.y = -maxFallSpeed;
+
+        rb.linearVelocity = v;
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("win"))
+        {
+            SceneManager.LoadScene("Main Menu");
+        }
+    }
+    private void OnTriggerEnter(Collider collision)
+    {
+        if (collision.gameObject.CompareTag("win"))
+        {
+            SceneManager.LoadScene("Main Menu");
+        }
+    }
     public void HitAndFall(Vector3 impactDirection, float force)
     {
         if (isKnockedOut) return;
@@ -113,6 +182,7 @@ public class PlayerController : MonoBehaviour
 
     void RestartLevel()
     {
+        DeathCounter.AddDeath();
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 }
