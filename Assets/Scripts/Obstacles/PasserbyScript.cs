@@ -48,16 +48,20 @@ public class PasserbyScript : MonoBehaviour
             player.HitAndFall(pushDirection, data.bounceForce);
         }
 
-        if (collision.gameObject.tag == "Back")
-        {
-            Desactivate();
-        }
+        
        // if (collision.gameObject.CompareTag("Finish"))
             //Spawn();
         //else
             //NoSpawn();
     }
-
+    private void OnTriggerEnter(Collider other)
+    {
+        PlayerController player = other.gameObject.GetComponent<PlayerController>();
+        if (other.gameObject.tag == "Back")
+        {
+            Desactivate();
+        }
+    }
     public void Desactivate ()
     {
         _objectPool.Release(this);
