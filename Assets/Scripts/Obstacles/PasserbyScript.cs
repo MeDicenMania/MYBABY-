@@ -15,6 +15,9 @@ public class PasserbyScript : MonoBehaviour
 
     [SerializeField] PasserbyData data;
 
+    private int direction = 1;
+    public bool spawnCheck;
+
     private void Start()
     {
         //if (_objectPool != null) return;
@@ -29,7 +32,7 @@ public class PasserbyScript : MonoBehaviour
 
     private void Update()
     {
-        transform.Translate(0,0,data.walkSpeed*Time.deltaTime);
+        transform.Translate(0, 0, direction * data.walkSpeed * Time.deltaTime);
     }
     private void OnCollisionEnter(Collision collision)
     {
@@ -49,11 +52,37 @@ public class PasserbyScript : MonoBehaviour
         {
             Desactivate();
         }
+        if (collision.gameObject.CompareTag("Finish"))
+            Spawn();
+        else
+            NoSpawn();
     }
 
     public void Desactivate ()
     {
         _objectPool.Release(this);
     }
-    
+
+    public void Foward()
+    {
+        direction = 1;
+    }
+
+    public void Backward()
+    {
+        direction = -1;
+    }
+
+    public void Spawn()
+    {
+        spawnCheck = true;
+
+    }
+
+    public void NoSpawn()
+    {
+        spawnCheck = false;
+        _objectPool.Release(this);
+    }
+
 }

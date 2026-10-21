@@ -12,6 +12,8 @@ public class PasserbyPool : MonoBehaviour
     [SerializeField]private float cooldownSpawn;
     [SerializeField]private float spawnRate = 1f;
 
+    [SerializeField] private bool spawnCheck;
+
     private IObjectPool<PasserbyScript> _pool;
 
     [SerializeField] private bool colectionCheck = true;//Tira error si intentamos devolver un objeto ya existente dentro del pool
@@ -26,15 +28,29 @@ public class PasserbyPool : MonoBehaviour
 
     private void FixedUpdate()
     {
+       
         cooldownSpawn -= Time.fixedDeltaTime;
         if (cooldownSpawn > 0f) return;
+        //if (passerbyPrefab.spawnCheck == true) return;
 
         cooldownSpawn = spawnRate;
 
-        Transform point = spawnPoints[UnityEngine.Random.Range(0, spawnPoints.Length)];
+        
+        int index = UnityEngine.Random.Range(0, spawnPoints.Length);
+        Transform point = spawnPoints[index];
 
         PasserbyScript passerObj = _pool.Get();
         passerObj.transform.SetPositionAndRotation(point.position, point.rotation);
+
+        if (index==0)
+        {
+            passerObj.Foward();
+        }
+        else
+        {
+            passerObj.Backward();
+        }
+
     }
 
     public void OnDestroyPooledObject(PasserbyScript prefab)
@@ -59,6 +75,6 @@ public class PasserbyPool : MonoBehaviour
         return passerbyInstance;
     }
 
-
+    
 
 }
